@@ -77,6 +77,10 @@ class Mesa(AutotoolsPackage):
     # Prevent an unnecessary xcb-dri dependency
     patch('autotools-x11-nodri.patch')
 
+    def setup_build_environment(self, env):
+        if '%intel' in self.spec:
+            env.set('LDFLAGS', "-shared-intel")
+
     def autoreconf(self, spec, prefix):
         which('autoreconf')('--force',  '--verbose', '--install')
 
@@ -172,5 +176,7 @@ class Mesa(AutotoolsPackage):
         args.append('--with-platforms=' + ','.join(args_platforms))
         args.append('--with-gallium-drivers=' + ','.join(args_gallium_drivers))
         args.append('--with-dri-drivers=' + ','.join(args_dri_drivers))
+
+        args.append('--enable-autotools')
 
         return args

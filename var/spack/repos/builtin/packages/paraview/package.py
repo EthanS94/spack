@@ -193,6 +193,7 @@ class Paraview(CMakePackage, CudaPackage):
         includes  = variant_bool('+plugins')
 
         cmake_args = [
+            '-DVTK_ENABLE_KITS:BOOL=ON',
             '-DPARAVIEW_BUILD_QT_GUI:BOOL=%s' % variant_bool('+qt'),
             '-DVTK_OPENGL_HAS_OSMESA:BOOL=%s' % variant_bool('+osmesa'),
             '-DVTK_USE_X:BOOL=%s' % nvariant_bool('+osmesa'),
@@ -276,5 +277,11 @@ class Paraview(CMakePackage, CudaPackage):
         # arises.
         if '%intel' in spec and spec.version >= Version('5.6'):
             cmake_args.append('-DPARAVIEW_ENABLE_MOTIONFX:BOOL=OFF')
+
+        if spec.satisfies('%intel'):
+            cmake_args.extend([
+                '-DCMAKE_CXX_FLAGS=-no-ipo',
+                '-DCMAKE_C_FLAGS=-no-ipo'
+            ])
 
         return cmake_args
